@@ -21,10 +21,6 @@
 }
 
 /* Dashboard CSS */
-body {
-    background-color: #f5f5f7;
-}
-
 .dashboard-list {
     padding-left: 50%;
     margin-left: 0%;
@@ -38,25 +34,6 @@ body {
     width: 10rem;
     
 }
-
-  .dashboard-header {
-    background: #111827;
-    color: #f9fafb;
-    padding: 1.5rem 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
-
-  .dashboard-header h1 {
-    font-size: 1.6rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .dashboard-header p {
-    margin: 0;
-    font-size: 0.95rem;
-    color: #d1d5db;
-  }
 
   .course-card {
     border-radius: 0.75rem;
@@ -139,7 +116,6 @@ body {
     min-width: 150px;
     padding: 0.4rem 0.6rem;
     border-radius: 999px;
-    border: 1px solid #d1d5db;
     background: #ffffff;
     font-size: 0.9rem;
     outline: none;
@@ -162,7 +138,8 @@ body {
   }
 
   .clear-btn:hover {
-    background: #d1d5db;
+    background:rgba(15, 23, 42, 0.863);
+    color: white;
   }
 
   .courses-section {
@@ -182,7 +159,7 @@ body {
   }
 
   .course-card {
-    background: #ffffff;
+    background: white;
     border-radius: 1rem;
     padding: 0.9rem 1rem;
     box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
@@ -254,26 +231,4 @@ body {
     text-align: center;
     color: #6b7280;
     font-size: 0.95rem;
-  }
-
-  @media (max-width: 640px) {
-    header, .courses-section {
-      padding: 1rem;
-    }
-
-    .filter-bar {
-      border-radius: 1rem;
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .clear-btn {
-      width: 100%;
-      justify-content: center;
-      margin-left: 0;
-    }
-
-    .filter-group select {
-      width: 100%;
-    }
   }
