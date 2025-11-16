@@ -1,5 +1,5 @@
 //Course browser js
-//Dummy info array (generated data)
+//Dummy info array (generated data will change once csv is created)
 const courses = [
     { code: "ENG1", name: "English I", level: "On Level", subject: "English", grade: "9", credits: 1 },
     { code: "ENG1H", name: "English I Honors", level: "Honors", subject: "English", grade: "9", credits: 1 },
@@ -24,15 +24,16 @@ const courses = [
     { code: "CSAP", name: "AP Computer Science Principles", level: "AP", subject: "Technology", grade: "10–12", credits: 1 }
   ];
 
+  //get html elements by class
   const levelFilter = document.getElementById("levelFilter");
   const subjectFilter = document.getElementById("subjectFilter");
   const coursesContainer = document.getElementById("coursesContainer");
   const summaryText = document.getElementById("summaryText");
   const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
-  // Initialize subject dropdown based on data
-  function populateSubjectOptions() {
-    const subjects = Array.from(new Set(courses.map(c => c.subject))).sort();
+  //init dropdown - populate based on data (dummy)
+  function subjectOptions() {
+    const subjects = Array.from(new Set(courses.map(c => c.subject)));
     subjects.forEach(subject => {
       const option = document.createElement("option");
       option.value = subject;
@@ -61,10 +62,11 @@ const courses = [
     //summary
     const levelLabel = levelFilter.value === "all" ? "All levels" : levelFilter.value;
     const subjectLabel = subjectFilter.value === "all" ? "All subjects" : subjectFilter.value;
-    summaryText.textContent = `${filtered.length} course(s) matching: ${levelLabel} • ${subjectLabel}`;
+    summaryText.textContent = `${filtered.length} course(s) matching: ${levelLabel}, ${subjectLabel}`;
 
     if (filtered.length === 0) {
-      coursesContainer.innerHTML = `<div class="no-results">
+      coursesContainer.innerHTML = 
+      `<div class="no-results">
         No courses match your filters. Try selecting a different level or subject.
       </div>`;
       return;
@@ -74,8 +76,8 @@ const courses = [
       const card = document.createElement("article");
       card.className = "course-card";
 
-      card.innerHTML = `
-        <div class="course-title-row">
+      card.innerHTML = 
+      `<div class="course-title-row">
           <div>
             <div class="course-name">${course.name}</div>
             <div class="course-code">${course.code}</div>
@@ -88,8 +90,7 @@ const courses = [
         </div>
         <div class="course-details">
           A ${course.level.toLowerCase()} ${course.subject.toLowerCase()} course worth ${course.credits} credit(s).
-        </div>
-      `;
+        </div>`;
 
       coursesContainer.appendChild(card);
     });
@@ -108,5 +109,5 @@ const courses = [
   clearFiltersBtn.addEventListener("click", clearFilters);
 
   // generate courses
-  populateSubjectOptions();
+  subjectOptions();
   renderCourses();

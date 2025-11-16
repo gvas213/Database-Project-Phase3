@@ -1,6 +1,6 @@
 //Student Dashboard
 //card generation
-//sample course array
+//sample course array (dummy data generated)
 const currentCourses = [
     {
       name: "AP Calculus AB",
