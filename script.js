@@ -7,4 +7,12 @@ redirectSignin.forEach(button => {
     });
 });
 
+const redirectBrowse = document.querySelectorAll('.redirect-browse');
+
+redirectBrowse.forEach(button => {
+    button.addEventListener('click', () => {
+        window.location.href = 'browse-courses.html';
+    });
+});
+
 
