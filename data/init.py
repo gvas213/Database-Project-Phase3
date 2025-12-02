@@ -143,13 +143,13 @@ section_gen = [
     ("room_no", id),
 ]
 
-# sections = run_gen(section_gen, len(courses) * 3)
+sections = run_gen(section_gen, len(courses) * 3)
 
-sections_file = open("section.csv", mode="r", newline="")
-sections = [list(section) for section in csv.reader(sections_file)]
-students = [
-    student for student in csv.reader(open("student.csv", mode="r", newline=""))
-][1:]
+# sections_file = open("section.csv", mode="r", newline="")
+# sections = [list(section) for section in csv.reader(sections_file)]
+# students = [
+#     student for student in csv.reader(open("student.csv", mode="r", newline=""))
+# ][1:]
 
 
 random_sections = random.choices(sections, k=4000)
@@ -189,7 +189,4 @@ def write_fake_csv(file_name, fake_header, fake_data):
 # write_fake_csv("ap_course.csv", header(ap_course_gen), ap_courses)
 # write_fake_csv("prereq.csv", header(prereq_gen), prereqs)
 # write_fake_csv("section.csv", header(section_gen), sections)
-#
-
-#
-write_fake_csv("enroll.csv", header(enroll_gen), enrolls)
+# write_fake_csv("enroll.csv", header(enroll_gen), enrolls)

@@ -31,6 +31,13 @@ const courses = [
   const summaryText = document.getElementById("summaryText");
   const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
+  async function getCourses() {
+      const resp = await fetch("/courses");
+      const data = await resp.json();
+      console.log(data);
+      return data;
+  }
+
   //init dropdown - populate based on data (dummy)
   function subjectOptions() {
     const subjects = Array.from(new Set(courses.map(c => c.subject)));
@@ -55,8 +62,11 @@ const courses = [
   }
 
   // render course cards
-  function renderCourses() {
-    const filtered = getFilteredCourses();
+  async function renderCourses() {
+    // const filtered = getFilteredCourses();
+    const filtered = await getCourses();
+    console.log(filtered);
+
     coursesContainer.innerHTML = "";
 
     //summary
@@ -65,7 +75,7 @@ const courses = [
     summaryText.textContent = `${filtered.length} course(s) matching: ${levelLabel}, ${subjectLabel}`;
 
     if (filtered.length === 0) {
-      coursesContainer.innerHTML = 
+      coursesContainer.innerHTML =
       `<div class="no-results">
         No courses match your filters. Try selecting a different level or subject.
       </div>`;
@@ -76,20 +86,15 @@ const courses = [
       const card = document.createElement("article");
       card.className = "course-card";
 
-      card.innerHTML = 
+      card.innerHTML =
       `<div class="course-title-row">
           <div>
-            <div class="course-name">${course.name}</div>
-            <div class="course-code">${course.code}</div>
+            <div class="course-name">${course.course_name}</div>
+            <div class="course-code">${course.course_num}</div>
           </div>
         </div>
-        <div class="badge-row">
-          <span class="badge badge-level">${course.level}</span>
-          <span class="badge">${course.subject}</span>
-          <span class="badge badge-grade">Grade: ${course.grade}</span>
-        </div>
         <div class="course-details">
-          A ${course.level.toLowerCase()} ${course.subject.toLowerCase()} course worth ${course.credits} credit(s).
+            ${course.course_description}
         </div>`;
 
       coursesContainer.appendChild(card);

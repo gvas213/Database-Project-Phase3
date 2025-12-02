@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/gvas213/Database-Project-Phase3#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.86.0",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "supabase": "^2.64.2"
   }
 }
