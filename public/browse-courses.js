@@ -25,56 +25,53 @@ const courses = [
   ];
 
   //get html elements by class
-  const levelFilter = document.getElementById("levelFilter");
-  const subjectFilter = document.getElementById("subjectFilter");
+  // const levelFilter = document.getElementById("levelFilter");
+  // const subjectFilter = document.getElementById("subjectFilter");
   const coursesContainer = document.getElementById("coursesContainer");
   const summaryText = document.getElementById("summaryText");
   const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+  const courseSearchInp = document.getElementById("courseSearch");
 
   async function getCourses() {
       const resp = await fetch("/courses");
       const data = await resp.json();
-      console.log(data);
       return data;
   }
 
   //init dropdown - populate based on data (dummy)
-  function subjectOptions() {
-    const subjects = Array.from(new Set(courses.map(c => c.subject)));
-    subjects.forEach(subject => {
-      const option = document.createElement("option");
-      option.value = subject;
-      option.textContent = subject;
-      subjectFilter.appendChild(option);
-    });
-  }
+  // function subjectOptions() {
+  //   const subjects = Array.from(new Set(courses.map(c => c.subject)));
+  //   subjects.forEach(subject => {
+  //     const option = document.createElement("option");
+  //     option.value = subject;
+  //     option.textContent = subject;
+  //     subjectFilter.appendChild(option);
+  //   });
+  // }
 
   //filter courses
-  function getFilteredCourses() {
-    const level = levelFilter.value;
-    const subject = subjectFilter.value;
-
-    return courses.filter(course => {
-      const matchesLevel = (level === "all") || (course.level === level);
-      const matchesSubject = (subject === "all") || (course.subject === subject);
-      return matchesLevel && matchesSubject;
-    });
-  }
+  // function getFilteredCourses() {
+  //   // const level = levelFilter.value;
+  //   const subject = subjectFilter.value;
+  //
+  //   return courses.filter(course => {
+  //     const matchesLevel = (level === "all") || (course.level === level);
+  //     const matchesSubject = (subject === "all") || (course.subject === subject);
+  //     return matchesLevel && matchesSubject;
+  //   });
+  // }
 
   // render course cards
-  async function renderCourses() {
-    // const filtered = getFilteredCourses();
-    const filtered = await getCourses();
-    console.log(filtered);
+  async function renderCourses(courses) {
 
     coursesContainer.innerHTML = "";
 
     //summary
-    const levelLabel = levelFilter.value === "all" ? "All levels" : levelFilter.value;
-    const subjectLabel = subjectFilter.value === "all" ? "All subjects" : subjectFilter.value;
-    summaryText.textContent = `${filtered.length} course(s) matching: ${levelLabel}, ${subjectLabel}`;
+    // const levelLabel = levelFilter.value === "all" ? "All levels" : levelFilter.value;
+    // const subjectLabel = subjectFilter.value === "all" ? "All subjects" : subjectFilter.value;
+    // summaryText.textContent = `${filtered.length} course(s) matching: ${levelLabel}, ${subjectLabel}`;
 
-    if (filtered.length === 0) {
+    if (courses.length === 0) {
       coursesContainer.innerHTML =
       `<div class="no-results">
         No courses match your filters. Try selecting a different level or subject.
@@ -82,7 +79,7 @@ const courses = [
       return;
     }
 
-    filtered.forEach(course => {
+    courses.forEach(course => {
       const card = document.createElement("article");
       card.className = "course-card";
 
@@ -101,18 +98,28 @@ const courses = [
     });
   }
 
-  //clear filters
-  function clearFilters() {
-    levelFilter.value = "all";
-    subjectFilter.value = "all";
-    renderCourses();
+  async function displayAllCourses() {
+    const courses = await getCourses();
+    renderCourses(courses);
+  }
+
+  async function clearSearch() {
+    courseSearchInp.value = "";
+    await displayAllCourses();
+  }
+
+  async function searchCourses(event) {
+    const resp = await fetch(`/course_search?course_name=${event.target.value}`);
+    const courses = await resp.json();
+    renderCourses(courses);
   }
 
   //listeners for change and click
-  levelFilter.addEventListener("change", renderCourses);
-  subjectFilter.addEventListener("change", renderCourses);
-  clearFiltersBtn.addEventListener("click", clearFilters);
+  // levelFilter.addEventListener("change", renderCourses);
+  // subjectFilter.addEventListener("change", renderCourses);
+  clearFiltersBtn.addEventListener("click", clearSearch);
+  courseSearchInp.addEventListener("input", searchCourses)
 
   // generate courses
-  subjectOptions();
-  renderCourses();
+  // subjectOptions();
+  displayAllCourses();

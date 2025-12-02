@@ -32,42 +32,46 @@
           </div>
         </div>
       </nav>
-    
+
       <main>
         <!-- Sticky filter bar -->
         <div class="filter-bar-wrapper">
-          <div class="filter-bar">
-            <div class="filter-group">
-              <label for="levelFilter">Course Level</label>
-              <select id="levelFilter">
-                <option value="all">All levels</option>
-                <option value="AP">AP</option>
-                <option value="Honors">Honors</option>
-                <option value="On Level">On Level</option>
-              </select>
-            </div>
-    
-            <div class="filter-group">
-              <label for="subjectFilter">Subject</label>
-              <select id="subjectFilter">
-                <option value="all">All subjects</option>
-              </select>
-            </div>
-    
+          <label for="courseSearch">Course Search</label>
+          <input type="text" id="courseSearch">
+          </input>
+
+          <!-- <div class="filter-bar"> -->
+          <!--   <div class="filter-group"> -->
+          <!--     <label for="levelFilter">Course Level</label> -->
+          <!--     <select id="levelFilter"> -->
+          <!--       <option value="all">All levels</option> -->
+          <!--       <option value="AP">AP</option> -->
+          <!--       <option value="Honors">Honors</option> -->
+          <!--       <option value="On Level">On Level</option> -->
+          <!--     </select> -->
+          <!--   </div> -->
+          <!---->
+          <!--   <div class="filter-group"> -->
+          <!--     <label for="subjectFilter">Subject</label> -->
+          <!--     <select id="subjectFilter"> -->
+          <!--       <option value="all">All subjects</option> -->
+          <!--     </select> -->
+          <!--   </div> -->
+          <!---->
             <button class="clear-btn" id="clearFiltersBtn">Clear filters</button>
-          </div>
+          <!-- </div> -->
         </div>
-    
+
         <!-- Results section -->
         <section class="courses-section">
           <div class="summary" id="summaryText"></div>
           <div id="coursesContainer" class="courses-grid"></div>
         </section>
       </main>
-    
+
     <script src="script.js"></script>
     <script src="browse-courses.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    
+
 </body>
 </html>
