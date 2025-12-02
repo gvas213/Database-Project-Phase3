@@ -28,6 +28,19 @@ app.get('/courses', async (req, res) => {
     return res.status(200).json(data);
 });
 
+app.get('/course_search', async (req, res) => {
+    const course_name = req.query.course_name;
+
+    // this srearch typo should be fixed, needs to be fixed in db to though since it's already been pushed
+    const {data, error} = await supabase.rpc("unsafe_course_srearch", { course_name });
+
+    if(error) {
+        return res.status(500);
+    }
+
+    return res.status(200).json(data);
+})
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
