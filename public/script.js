@@ -14,5 +14,3 @@ redirectBrowse.forEach(button => {
         window.location.href = 'browse-courses.html';
     });
 });
-
-

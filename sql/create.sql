@@ -92,8 +92,10 @@ CREATE TABLE sections
   );
 
 CREATE TABLE enrollment
-  ( sid INT REFERENCES students(sid)
-  , section_id INT REFERENCES sections(section_id)
-  , course_number INT REFERENCES courses(course_number)
-  , PRIMARY KEY (sid, section_id, course_number)
+  ( sid INT not null
+  , section_id INT not null
+  , course_num INT not null
+  , PRIMARY KEY (sid, section_id, course_num)
+  , foreign key (sid) references students(sid)
+  , foreign key (section_id, course_num) references sections(section_id, course_num)
   );

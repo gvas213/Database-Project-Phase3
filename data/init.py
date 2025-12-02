@@ -12,7 +12,7 @@ fall_grades = csv.DictReader(fall_grades_file)
 
 
 def id():
-    return fake.random_number(digits=6, fix_len=True)
+    return fake.unique.random_number(digits=6, fix_len=True)
 
 
 def address():
@@ -27,9 +27,13 @@ def header(gen):
     return [x[0] for x in gen]
 
 
+def phone_number():
+    return fake.phone_number()[:14]
+
+
 counselor_gen = [
     ("cid", id),
-    ("ssn", fake.ssn),
+    ("ssn", fake.unique.ssn),
     ("fname", fake.first_name),
     ("lname", fake.last_name),
     ("alpha_range", lambda: random.choice(["A-G", "G-N", "N-T", "T-Z"])),
@@ -37,18 +41,16 @@ counselor_gen = [
 
 counselors = run_gen(counselor_gen, 50)
 
-cids = [x[0] for x in counselors]
-
 
 student_gen = [
     ("sid", id),
-    ("cid", lambda: random.choice(cids)),
-    ("ssn", fake.ssn),
+    ("cid", lambda: random.choice(counselors)[0]),
+    ("ssn", fake.unique.ssn),
     ("fname", fake.first_name),
     ("lname", fake.last_name),
     ("gpa", lambda: fake.random_int(min=0, max=4)),
     ("dob", fake.date_of_birth),
-    ("email", fake.email),
+    ("email", fake.unique.email),
     ("address", address),
 ]
 
@@ -73,11 +75,11 @@ sophmores = run_gen(sophmore_gen, 30)
 
 teacher_gen = [
     ("tid", id),
-    ("ssn", fake.ssn),
+    ("ssn", fake.unique.ssn),
     ("fname", fake.first_name),
     ("lname", fake.last_name),
-    ("email", fake.email),
-    ("phone", fake.phone_number),
+    ("email", fake.unique.email),
+    ("phone", phone_number),
     ("room_no", id),
 ]
 
@@ -85,11 +87,11 @@ teachers = run_gen(teacher_gen, 77)
 
 administrator_gen = [
     ("aid", id),
-    ("ssn", fake.ssn),
+    ("ssn", fake.unique.ssn),
     ("fname", fake.first_name),
     ("lname", fake.last_name),
-    ("email", fake.email),
-    ("phone", fake.phone_number),
+    ("email", fake.unique.email),
+    ("phone", phone_number),
     ("room_no", id),
 ]
 
@@ -104,18 +106,22 @@ supervises_gen = [
 supervises = run_gen(supervises_gen, 77)
 
 
-course_nums = list(set(x["Subject"] + x["Catalog Nbr"] for x in fall_grades))
+course_names = list(set(x["Subject"] + x["Catalog Nbr"] for x in fall_grades))
 
-random_course_nums = course_nums.copy()
+course_names_gen = course_names.copy()
 course_gen = [
     ("course_num", id),
-    ("course_name", lambda: random_course_nums.pop()),
+    ("course_name", lambda: course_names_gen.pop()),
     ("course_description", fake.sentence),
 ]
-courses = run_gen(course_gen, len(course_nums))
 
+courses = run_gen(course_gen, len(course_names))
+
+course_nums = [course[0] for course in courses]
+
+random_course_nums_ap = random.sample(course_nums, len(course_nums))
 ap_course_gen = [
-    ("course_num", id),
+    ("course_name", lambda: random_course_nums_ap.pop()),
     ("exam_date", lambda: fake.date_between(start_date="today", end_date="+1y")),
 ]
 
@@ -126,26 +132,38 @@ prereq_gen = [
     ("prereq_num", lambda: random.choice(course_nums)),
 ]
 
-prereqs = run_gen(prereq_gen, 100)
+prereqs = run_gen(prereq_gen, 10)
 
 
 section_gen = [
     ("section_id", id),
-    ("course_number", lambda: random.choice(course_nums)),
+    ("course_num", lambda: random.choice(course_nums)),
     ("tid", lambda: random.choice(teachers)[0]),
-    ("time", lambda: f"{fake.day_of_week()} {fake.time(pattern="%H:%M")}"),
+    ("class_time", lambda: f"{fake.day_of_week()} {fake.time(pattern="%H:%M")}"),
     ("room_no", id),
 ]
 
-sections = run_gen(section_gen, len(courses) * 3)
+# sections = run_gen(section_gen, len(courses) * 3)
+
+sections_file = open("section.csv", mode="r", newline="")
+sections = [list(section) for section in csv.reader(sections_file)]
+students = [
+    student for student in csv.reader(open("student.csv", mode="r", newline=""))
+][1:]
+
+
+random_sections = random.choices(sections, k=4000)
+random_section_ids = [section[0] for section in random_sections]
+random_course_nums = [section[1] for section in random_sections]
 
 enroll_gen = [
     ("sid", lambda: random.choice(students)[0]),
-    ("section_id", id),
-    ("course_number", lambda: random.choice(course_nums)),
+    ("section_id", lambda: random_section_ids.pop()),
+    ("course_num", lambda: random_course_nums.pop()),
 ]
 
-enrolls = run_gen(enroll_gen, 4000)
+
+enrolls = [list(y) for y in list(set(tuple(x) for x in run_gen(enroll_gen, 4000)))]
 
 
 def write_fake_csv(file_name, fake_header, fake_data):
@@ -159,15 +177,19 @@ def write_fake_csv(file_name, fake_header, fake_data):
             writer.writerow(row)
 
 
-write_fake_csv("student.csv", header(student_gen), students)
-write_fake_csv("senior.csv", header(senior_gen), seniors)
-write_fake_csv("junior.csv", header(junior_gen), juniors)
-write_fake_csv("sophmore.csv", header(sophmore_gen), sophmores)
-write_fake_csv("teacher.csv", header(teacher_gen), teachers)
-write_fake_csv("administrator.csv", header(administrator_gen), administrators)
-write_fake_csv("supervises.csv", header(supervises_gen), supervises)
-write_fake_csv("course.csv", header(course_gen), courses)
-write_fake_csv("ap_course.csv", header(ap_course_gen), ap_courses)
-write_fake_csv("prereq.csv", header(prereq_gen), prereqs)
-write_fake_csv("section.csv", header(section_gen), sections)
+# write_fake_csv("student.csv", header(student_gen), students)
+# write_fake_csv("senior.csv", header(senior_gen), seniors)
+# write_fake_csv("junior.csv", header(junior_gen), juniors)
+# write_fake_csv("sophmore.csv", header(sophmore_gen), sophmores)
+# write_fake_csv("teacher.csv", header(teacher_gen), teachers)
+# write_fake_csv("administrator.csv", header(administrator_gen), administrators)
+# write_fake_csv("counselor.csv", header(counselor_gen), counselors)
+# write_fake_csv("supervises.csv", header(supervises_gen), supervises)
+# write_fake_csv("course.csv", header(course_gen), courses)
+# write_fake_csv("ap_course.csv", header(ap_course_gen), ap_courses)
+# write_fake_csv("prereq.csv", header(prereq_gen), prereqs)
+# write_fake_csv("section.csv", header(section_gen), sections)
+#
+
+#
 write_fake_csv("enroll.csv", header(enroll_gen), enrolls)
