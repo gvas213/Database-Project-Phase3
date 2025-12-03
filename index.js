@@ -43,6 +43,43 @@ app.get('/course_search', async (req, res) => {
     return res.status(200).json(data);
 })
 
+//sign in back end
+app.post('/signin', async (req, res) => {
+    try {
+        const {email, sid} = req.body;
+        if (!email || !sid) {
+            return res.status(400).json({ error: 'Email and SID are required.' });
+          }
+      
+          const sidInt = parseInt(sid, 6);
+          if (Number.isNaN(sidInt)) {
+            return res.status(400).json({ error: 'SID must be a number.' });
+          }
+      
+          // Look up student in the students table
+          const { data, error } = await supabase
+            .from('students')
+            .select('sid, email, fname, lname')
+            .eq('email', email)
+            .eq('sid', sidInt)
+            .single();
+      
+          if (error || !data) {
+            console.error('Login error:', error);
+            return res.status(401).json({ error: 'Invalid email or SID.' });
+          }
+      
+          // Success: send back student info
+          return res.status(200).json({
+            message: 'Login successful.',
+            student: data,
+          });
+        } catch (err) {
+          console.error('Unexpected login error:', err);
+          return res.status(500).json({ error: 'Server error, please try again.' });
+        }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
