@@ -13,16 +13,19 @@
 
     <body>
         <!-- Student sign in form -->
-        <form action="dashboard.html" class="student-login">
+        <form for="loginForm" class="student-login" novalidate>
             <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">Email address</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="loginEmail" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" required>
             </div>
+            <div class="invalid-feedback">Please enter a valid email</div>
             <div class="mb-3">
-              <label for="exampleInputPassword1" class="form-label">Password</label>
-              <input type="password" class="form-control" id="exampleInputPassword1">
+              <label for="loginSID" class="form-label">Password/SID</label>
+              <input type="password" class="form-control" id="loginSID" required>
             </div>
+            <div class="invalid-feedback">Please enter a valid SID</div>
             <button type="submit" class="btn btn-primary">Submit</button>
+            <div for="loginError" class="text-danger mt-3"></div>
           </form>
 
 
