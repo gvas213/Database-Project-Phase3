@@ -12,22 +12,25 @@
 
 
     <body>
-        <!-- Student sign in form -->
-        <form id="loginForm" class="student-login" novalidate>
+        <!-- change pw form -->
+        <form id="changePWForm" class="student-login" novalidate>
           <div class="mb-3">
-            <label for="loginEmail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" required>
-            <div class="invalid-feedback">Please enter a valid email.</div>
+            <label for="changePWSID" class="form-label">SID</label>
+            <input class="form-control" id="changePWSID" required>
           </div>
 
           <div class="mb-3">
-            <label for="loginPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="loginPassword" required>
-            <div class="invalid-feedback">Please enter your password.</div>
+            <label for="oldPW" class="form-label">Old Password</label>
+            <input type="password" class="form-control" id="oldPW" required>
           </div>
 
-          <button type="submit" class="btn btn-primary">Sign In</button>
-          <button class="btn btn-primary redirect-changePW">Change Password</button>
+          <div class="mb-3">
+            <label for="newPW" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="newPW" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-primary redirect-signin">Sign In</button>
 
           <div id="loginError" class="text-danger mt-3"></div>
       </form>

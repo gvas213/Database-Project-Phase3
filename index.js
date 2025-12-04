@@ -45,6 +45,51 @@ app.get('/course_search', async (req, res) => {
     return res.status(200).json(data);
 })
 
+//change password
+app.post('/change-password', async (req, res) => {
+
+  try {
+    const { sid, oldPassword, newPassword } = req.body;
+
+    // validation
+    if (!sid || !oldPassword || !newPassword) {
+      return res.status(400).json({ error: 'SID and passwords are required.' });
+    }
+
+    // Look up student in the students table
+    const { data: student, error: selectError } = await supabase
+      .from('students')
+      .select('sid') 
+      .eq('sid', sid)
+      .eq('password', oldPassword)
+      .single();
+
+    if (selectError || !student) {
+      console.error('Select error:', selectError);
+      return res.status(401).json({ error: 'Invalid SID or old password.' });
+    }
+
+    const { error: updateError } = await supabase
+      .from('students')
+      .update({ password: newPassword})
+      .eq('sid', sid);
+    
+      if(updateError) {
+        console.error('Password update error: ', updateError);
+        return res.status(500).json({error: "failed to update password"});
+      }
+
+    // send back student info
+    return res.status(200).json({
+      message: 'Update successful.'
+    });
+  } catch (err) {
+    console.error('Unexpected login error:', err);
+    return res.status(500).json({ error: 'Server error, please try again.' });
+  }
+
+});
+
 // sign in back end
 app.post('/signin', async (req, res) => {
   try {
