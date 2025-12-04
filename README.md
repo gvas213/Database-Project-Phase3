@@ -34,4 +34,4 @@ Database-Project-Phas3/
 
 # SQL injection examples
 ' AND 0=1 ; --
-' AND 0=1 ; INSERT INTO courses (course_num, course_name, course_description) VALUES (666666, 'EVIL COURSE', 'sql injection working') RETURNING *; --
+' AND 0=1 ; INSERT INTO courses (course_num, course_name, course_description) VALUES (346345, 'CANNOT INJECT COURS', 'sql injection works') RETURNING *; --
