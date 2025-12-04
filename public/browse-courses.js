@@ -6,6 +6,7 @@ const coursesContainer = document.getElementById("coursesContainer");
 const summaryText = document.getElementById("summaryText");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 const courseSearchInp = document.getElementById("courseSearch");
+const redirectCreateCourse = document.getElementById("redirect-createCourse");
 
 async function getCourses() {
   const resp = await fetch("/courses");
@@ -78,6 +79,9 @@ async function searchCourses(event) {
 //listeners for change and click
 clearFiltersBtn.addEventListener("click", clearSearch);
 courseSearchInp.addEventListener("input", searchCourses)
+redirectCreateCourse.addEventListener('click', () => {
+    window.location.href = 'create_course.html';
+})
 
 // generate courses
 displayAllCourses();

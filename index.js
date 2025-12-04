@@ -69,6 +69,29 @@ app.get('/course_search', async (req, res) => {
     return res.status(200).json(data);
 })
 
+app.post('/course_create', async (req, res) => {
+
+    const { name, num, desc } = req.body;
+
+    // validation
+    if (!name || !num || !desc) {
+      return res.status(400).json({ error: 'number, name and description are required.' });
+    }
+
+    const { error } = await supabase
+      .from("courses")
+      .insert({ course_num : num, course_name : name, course_description: desc });
+
+    console.log("created_course", {num, name, desc});
+
+    if(error){
+        console.error("Create course error:", error);
+        return res.status(409).json({ error });
+    }
+
+    return res.status(200).json({message : "Course created successfully"});
+});
+
 //change password
 app.post('/change-password', async (req, res) => {
 
@@ -150,14 +173,12 @@ app.post('/signin', async (req, res) => {
 
 app.get('/course_search_safe', async (req, res) => {
     const course_name = req.query.course_name;
-    console.log(course_name);
 
     const {data, error} = await  supabase
         .from('courses')
         .select()
         .like('course_name', `%${course_name}%`);
 
-    console.log(data, error);
 
     if(error) {
         return res.status(500);
