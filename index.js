@@ -4,6 +4,8 @@ const path = require('path');
 require("dotenv").config();
 
 const app = express();
+app.use(express.json());
+
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
@@ -43,41 +45,83 @@ app.get('/course_search', async (req, res) => {
     return res.status(200).json(data);
 })
 
-//sign in back end
+//change password
+app.post('/change-password', async (req, res) => {
+
+  try {
+    const { sid, oldPassword, newPassword } = req.body;
+
+    // validation
+    if (!sid || !oldPassword || !newPassword) {
+      return res.status(400).json({ error: 'SID and passwords are required.' });
+    }
+
+    // Look up student in the students table
+    const { data: student, error: selectError } = await supabase
+      .from('students')
+      .select('sid') 
+      .eq('sid', sid)
+      .eq('password', oldPassword)
+      .single();
+
+    if (selectError || !student) {
+      console.error('Select error:', selectError);
+      return res.status(401).json({ error: 'Invalid SID or old password.' });
+    }
+
+    const { error: updateError } = await supabase
+      .from('students')
+      .update({ password: newPassword})
+      .eq('sid', sid);
+    
+      if(updateError) {
+        console.error('Password update error: ', updateError);
+        return res.status(500).json({error: "failed to update password"});
+      }
+
+    // send back student info
+    return res.status(200).json({
+      message: 'Update successful.'
+    });
+  } catch (err) {
+    console.error('Unexpected login error:', err);
+    return res.status(500).json({ error: 'Server error, please try again.' });
+  }
+
+});
+
+// sign in back end
 app.post('/signin', async (req, res) => {
-    try {
-        const {email, sid} = req.body;
-        if (!email || !sid) {
-            return res.status(400).json({ error: 'Email and SID are required.' });
-          }
-      
-          const sidInt = parseInt(sid, 6);
-          if (Number.isNaN(sidInt)) {
-            return res.status(400).json({ error: 'SID must be a number.' });
-          }
-      
-          // Look up student in the students table
-          const { data, error } = await supabase
-            .from('students')
-            .select('sid, email, fname, lname')
-            .eq('email', email)
-            .eq('sid', sidInt)
-            .single();
-      
-          if (error || !data) {
-            console.error('Login error:', error);
-            return res.status(401).json({ error: 'Invalid email or SID.' });
-          }
-      
-          // Success: send back student info
-          return res.status(200).json({
-            message: 'Login successful.',
-            student: data,
-          });
-        } catch (err) {
-          console.error('Unexpected login error:', err);
-          return res.status(500).json({ error: 'Server error, please try again.' });
-        }
+  try {
+    const { email, password } = req.body;
+
+    // validation
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
+    }
+
+    // Look up student in the students table
+    const { data, error } = await supabase
+      .from('students')
+      .select('sid, email, fname, lname, gpa') 
+      .eq('email', email)
+      .eq('password', password)
+      .single();
+
+    if (error) {
+      console.error('Login error:', error);
+      return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+
+    // send back student info
+    return res.status(200).json({
+      message: 'Login successful.',
+      student: data,
+    });
+  } catch (err) {
+    console.error('Unexpected login error:', err);
+    return res.status(500).json({ error: 'Server error, please try again.' });
+  }
 });
 
 const port = process.env.PORT || 3000;
