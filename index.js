@@ -24,22 +24,46 @@ app.get('/courses', async (req, res) => {
         .select()
 
     if(error) {
-        return res.status(500);
+        return res.status(500).end();
     }
 
     return res.status(200).json(data);
 });
 
+app.delete('/course_delete/:course_num', async (req, res) => {
+    const course_num = req.params.course_num;
+
+    const {enr_data, enr_error} = await supabase
+      .from('enrollment')
+      .delete()
+      .eq('course_num', course_num);
+
+    const {sec_data, sec_error} = await supabase
+      .from('sections')
+      .delete()
+      .eq('course_num', course_num);
+
+    const {cor_data, cor_error} = await supabase
+        .from('courses')
+        .delete()
+        .eq('course_num', course_num);
+
+
+    if(enr_error || sec_error || cor_error) {
+        return res.status(500).end();
+    }
+
+    return res.status(204).end();
+});
+
 app.get('/course_search', async (req, res) => {
     const course_name = req.query.course_name;
-    console.log(course_name);
 
     // this srearch typo should be fixed, needs to be fixed in db to though since it's already been pushed
     const {data, error} = await supabase.rpc("unsafe_course_srearch", { course_name });
-    console.log(data, error);
 
     if(error) {
-        return res.status(500);
+        return res.status(500).end();
     }
 
     return res.status(200).json(data);
@@ -59,7 +83,7 @@ app.post('/change-password', async (req, res) => {
     // Look up student in the students table
     const { data: student, error: selectError } = await supabase
       .from('students')
-      .select('sid') 
+      .select('sid')
       .eq('sid', sid)
       .eq('password', oldPassword)
       .single();
@@ -73,7 +97,7 @@ app.post('/change-password', async (req, res) => {
       .from('students')
       .update({ password: newPassword})
       .eq('sid', sid);
-    
+
       if(updateError) {
         console.error('Password update error: ', updateError);
         return res.status(500).json({error: "failed to update password"});
@@ -103,7 +127,7 @@ app.post('/signin', async (req, res) => {
     // Look up student in the students table
     const { data, error } = await supabase
       .from('students')
-      .select('sid, email, fname, lname, gpa') 
+      .select('sid, email, fname, lname, gpa')
       .eq('email', email)
       .eq('password', password)
       .single();
@@ -123,6 +147,24 @@ app.post('/signin', async (req, res) => {
     return res.status(500).json({ error: 'Server error, please try again.' });
   }
 });
+
+app.get('/course_search_safe', async (req, res) => {
+    const course_name = req.query.course_name;
+    console.log(course_name);
+
+    const {data, error} = await  supabase
+        .from('courses')
+        .select()
+        .like('course_name', `%${course_name}%`);
+
+    console.log(data, error);
+
+    if(error) {
+        return res.status(500);
+    }
+
+    return res.status(200).json(data);
+})
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
